@@ -9,11 +9,13 @@ const testInput = require('fs')
             .map(Number);
 const rangeStart = 109165;
 const rangeEnd = 576723;
-let validPasswords = [];
+let validPasswords1 = [];
+let validPasswords2 = [];
 
-function getIsValidPassword(password) {
+function getIsValidPassword(password, isPart2) {
     let neverDecrease = true;
     let hasTwinDigits = false;
+    let twins = {};
 
     if (password.length < 6) {
         return false;
@@ -27,31 +29,26 @@ function getIsValidPassword(password) {
         }
 
         if (password[i] === password[i - 1]) {
-            hasTwinDigits = true;
+            twins[password[i]] = twins[password[i]] ? twins[password[i]] + 1 : 2;
         }
     }
 
-    // if (!neverDecrease) {
-    //     console.log(password, 'decreases');
-    // }
-
-    // if (!hasTwinDigits) {
-    //     console.log(password, 'no twins');
-    // }
+    if (isPart2) {
+        hasTwinDigits = Object.values(twins).some(val => val === 2);
+    } else {
+        hasTwinDigits = Object.keys(twins).length > 0;
+    }
 
     return  (neverDecrease && hasTwinDigits);
 }
 
-function getValidPasswordsInRange(rangeStart, rangeEnd) {
+function getValidPasswordsInRange(rangeStart, rangeEnd, isPart2) {
     const validPasswords = [];
-    console.log('rangestart', rangeStart);
-    console.log('rangeEnd', rangeEnd);
-
 
     for (let i = rangeStart; i < (rangeEnd - 6); ++i) {
         const inputRange = i.toString().split('').map(Number);
         const passwordToTest = inputRange;
-        const passwordResult = getIsValidPassword(passwordToTest);
+        const passwordResult = getIsValidPassword(passwordToTest, isPart2);
 
         if (passwordResult) {
             validPasswords.push(passwordToTest)
@@ -61,14 +58,34 @@ function getValidPasswordsInRange(rangeStart, rangeEnd) {
     return validPasswords;
 }
 
-console.time('day4');
-validPasswords = getValidPasswordsInRange(rangeStart, rangeEnd);
-console.timeEnd('day4');
+console.time('day4 part 1');
+validPasswords1 = getValidPasswordsInRange(rangeStart, rangeEnd, false);
+console.timeEnd('day4 part 1');
 
 console.group('sample');
-console.log(validPasswords.slice(validPasswords.length - 10, validPasswords.length - 1));
+console.log(validPasswords1.slice(validPasswords1.length - 10, validPasswords1.length - 1));
 console.groupEnd('sample');
 
-console.group('answer');
-console.log(validPasswords.length);
-console.groupEnd('answer');
+console.group('answer 1');
+console.log(validPasswords1.length);
+console.groupEnd('answer 1');
+
+// part 2
+
+console.time('day4 part 2');
+validPasswords2 = getValidPasswordsInRange(rangeStart, rangeEnd, true);
+console.timeEnd('day4 part 2');
+
+console.group('sample');
+console.log(validPasswords2.slice(validPasswords2.length - 10, validPasswords2.length - 1));
+console.groupEnd('sample');
+
+console.group('answer 2');
+console.log(validPasswords2.length);
+console.groupEnd('answer 2');
+
+// part 1
+console.assert(validPasswords1.length === 2814, `${validPasswords1.length} should be 2814`);
+
+// part 2
+console.assert(validPasswords2.length === 1991, `${validPasswords2.length} should be 1991`);
