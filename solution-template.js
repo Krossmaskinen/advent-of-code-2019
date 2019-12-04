@@ -1,10 +1,10 @@
-const fInput = require('fs')
-            .readFileSync('input-[#].txt')
+const input = require('fs')
+            .readFileSync('input#.txt')
             .toString()
             .split('\n')
             .map(Number);
 const testInput = require('fs')
-            .readFileSync('input-[#].test.txt')
+            .readFileSync('test#.txt')
             .toString()
             .split('\n')
             .map(Number);
